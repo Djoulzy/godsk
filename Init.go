@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-func InitDskFile(fileName string) (*DSKFileFormat, error) {
+func InitContainer(fileName string) (*DSKFileFormat, error) {
 	file, err := os.Open(fileName)
 	defer file.Close()
 
@@ -34,6 +34,7 @@ func (D *DSKFileFormat) init(f *os.File) {
 	D.physicalTrack = 0
 	D.bitStreamPos = 0
 	D.revolution = 0
+	D.Metadata = make(map[string]string)
 }
 
 func (D *DSKFileFormat) Dump(full bool) {

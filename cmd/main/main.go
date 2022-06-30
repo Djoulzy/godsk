@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	disk, err := godsk.InitDskFile("Dos33.dsk")
+	disk, err := godsk.InitContainer("Dos33.dsk")
 	if err != nil {
 		panic(err)
 	}
