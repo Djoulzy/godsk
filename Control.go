@@ -4,6 +4,7 @@ import "fmt"
 
 var count int = 0
 var wheel []byte = []byte{'-', '\\', '|', '/'}
+var pickbit = []byte{128, 64, 32, 16, 8, 4, 2, 1}
 
 func (D *DSKFileFormat) IsWriteProtected() bool {
 	return true
@@ -13,19 +14,42 @@ func (D *DSKFileFormat) GetMeta() map[string]string {
 	return D.Metadata
 }
 
-func (D *DSKFileFormat) GetNextByte() byte {
-	result := D.TRKS[D.dataTrack][D.bitStreamPos]
+func (D *DSKFileFormat) getNextBit() byte {
+	// Lecture d'un track vide
+	// fmt.Printf("DataTrack: %v\n", W.dataTrack)
+
+	// D.bitStreamPos = D.bitStreamPos % 50304
+
+	targetByte := D.bitStreamPos >> 3
+	targetBit := D.bitStreamPos & 7
+
+	res := (D.TRKS[D.dataTrack][targetByte] & pickbit[targetBit]) >> (7 - targetBit)
+
 	D.bitStreamPos++
-
-	if D.bitStreamPos > 4095 {
+	if D.bitStreamPos > 50304 {
 		D.bitStreamPos = 0
+		D.revolution++
+	}
+	return res
+	// return 0
+}
+
+func (D *DSKFileFormat) GetNextByte() byte {
+	var bit, result byte
+
+	result = 0
+	for bit = 0; bit == 0; bit = D.getNextBit() {
+	}
+	result = 0x80 // the bit we just retrieved is the high bit
+	for i := 6; i >= 0; i-- {
+		result |= D.getNextBit() << i
 	}
 
-	fmt.Printf("-- [%c] T:%02.02f (%d) Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.bitStreamPos)
-	count++
-	if count >= len(wheel) {
-		count = 0
-	}
+	// fmt.Printf("-- [%c] T:%02.02f (%d) Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.bitStreamPos)
+	// count++
+	// if count >= len(wheel) {
+	// 	count = 0
+	// }
 	return result
 }
 
@@ -57,4 +81,22 @@ func (D *DSKFileFormat) Seek(offset float32) {
 		destTrack = maxTrack
 	}
 	D.GoToTrack(destTrack)
+}
+
+func (D *DSKFileFormat) DumpTrack(track float32) {
+	var val byte
+
+	D.GoToTrack(track)
+	D.bitStreamPos = 0
+	for i := 1; i <= 50304; i++ {
+		val = D.GetNextByte()
+		fmt.Printf("%02X ", val)
+		if i%32 == 0 {
+			fmt.Printf("\n")
+		}
+	}
+}
+
+func (D *DSKFileFormat) DumpTrackRaw(track float32) {
+
 }

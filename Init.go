@@ -20,14 +20,16 @@ func InitContainer(fileName string) (*DSKFileFormat, error) {
 
 func (D *DSKFileFormat) init(f *os.File) {
 	var dataStart uint32
+	var trkBuff = make([]byte, 4096)
+	var i byte
 	D.fdesc = f
 
-	for i := 0; i < 35; i++ {
+	for i = 0; i < 35; i++ {
 		dataStart = uint32(i) * 4096
 		f.Seek(int64(dataStart), 0)
 
-		D.TRKS[i] = make([]byte, 4096)
-		f.Read(D.TRKS[i])
+		f.Read(trkBuff)
+		D.TRKS[i] = deserialise_track(trkBuff, i, false)
 	}
 
 	D.dataTrack = 0
