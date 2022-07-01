@@ -34,7 +34,7 @@ func (D *DSKFileFormat) init(f *os.File) {
 
 	D.dataTrack = 0
 	D.physicalTrack = 0
-	D.bitStreamPos = 0
+	D.byteStreamPos = 0
 	D.revolution = 0
 	D.Metadata = make(map[string]string)
 }

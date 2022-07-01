@@ -10,6 +10,6 @@ type DSKFileFormat struct {
 	Version       int
 	physicalTrack float32
 	dataTrack     byte
-	bitStreamPos  uint32
+	byteStreamPos  uint32
 	revolution    int
 }
