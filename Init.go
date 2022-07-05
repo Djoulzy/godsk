@@ -29,7 +29,7 @@ func (D *DSKFileFormat) init(f *os.File) {
 		f.Seek(int64(dataStart), 0)
 
 		f.Read(trkBuff)
-		D.TRKS[i] = deserialise_track(trkBuff, i, false)
+		D.deserialise_track(trkBuff, i, false)
 	}
 
 	D.dataTrack = 0

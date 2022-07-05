@@ -14,49 +14,36 @@ func (D *DSKFileFormat) GetMeta() map[string]string {
 	return D.Metadata
 }
 
-// func (D *DSKFileFormat) getNextBit() byte {
-// 	// Lecture d'un track vide
-// 	// fmt.Printf("DataTrack: %v\n", W.dataTrack)
-
-// 	// D.bitStreamPos = D.bitStreamPos % 50304
-
-// 	targetByte := D.bitStreamPos >> 3
-// 	targetBit := D.bitStreamPos & 7
-
-// 	res := (D.TRKS[D.dataTrack][targetByte] & pickbit[targetBit]) >> (7 - targetBit)
-
-// 	D.bitStreamPos++
-// 	if D.bitStreamPos > 50304 {
-// 		D.bitStreamPos = 0
-// 		D.revolution++
-// 	}
-// 	return res
-// 	// return 0
-// }
-
 func (D *DSKFileFormat) GetNextByte() byte {
 	var result byte
-
-	// result = 0
-	// for bit = 0; bit == 0; bit = D.getNextBit() {
-	// }
-	// result = 0x80 // the bit we just retrieved is the high bit
-	// for i := 6; i >= 0; i-- {
-	// 	result |= D.getNextBit() << i
-	// }
 
 	result = D.TRKS[D.dataTrack][D.byteStreamPos]
 	D.byteStreamPos++
 	if D.byteStreamPos > 6645 {
 		D.byteStreamPos = 0
+		D.revolution++
 	}
 
-	fmt.Printf("-- [%c] T:%02.02f (%d) Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.byteStreamPos)
+	fmt.Printf("-- [%c] T:%02.02f (%d) Rev: %02d Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.revolution, D.byteStreamPos)
 	count++
 	if count >= len(wheel) {
 		count = 0
 	}
 	return result
+}
+
+func (D *DSKFileFormat) FindSectorStart(trackNum byte) uint32 {
+	var s int
+	for s = 0; s < 15 && D.TMAP[int(trackNum)].Sectors[s].StartByte < D.byteStreamPos; s++ {
+	}
+	s -= 1
+	if s < 0 {
+		s = 0
+	}
+	if s > 15 {
+		s = 15
+	}
+	return D.TMAP[int(trackNum)].Sectors[s].StartByte
 }
 
 func (D *DSKFileFormat) GoToTrack(num float32) {
@@ -71,6 +58,7 @@ func (D *DSKFileFormat) GoToTrack(num float32) {
 
 	D.physicalTrack = num
 	D.dataTrack = newDataTrack
+	D.byteStreamPos = D.FindSectorStart(newDataTrack)
 	// fmt.Printf("Move to T:%02.02f (%d) at pos %d\n", W.physicalTrack, W.dataTrack, W.bitStreamPos)
 }
 
