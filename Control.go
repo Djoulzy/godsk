@@ -24,7 +24,9 @@ func (D *DSKFileFormat) GetNextByte() byte {
 		D.revolution++
 	}
 
-	fmt.Printf("-- [%c] T:%02.02f (%d) Rev: %02d Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.revolution, D.byteStreamPos)
+	if debug {
+		fmt.Printf("-- [%c] T:%02.02f (%d) Rev: %02d Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.revolution, D.byteStreamPos)
+	}
 	count++
 	if count >= len(wheel) {
 		count = 0

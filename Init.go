@@ -4,7 +4,9 @@ import (
 	"os"
 )
 
-func InitContainer(fileName string) (*DSKFileFormat, error) {
+var debug bool
+
+func InitContainer(fileName string, debugMode bool) (*DSKFileFormat, error) {
 	file, err := os.Open(fileName)
 	defer file.Close()
 
@@ -12,6 +14,7 @@ func InitContainer(fileName string) (*DSKFileFormat, error) {
 		return nil, err
 	}
 
+	debug = debugMode
 	tmp := DSKFileFormat{}
 	tmp.init(file)
 
