@@ -97,3 +97,7 @@ func (D *DSKFileFormat) DumpTrack(track float32) {
 func (D *DSKFileFormat) DumpTrackRaw(track float32) {
 
 }
+
+func (D *DSKFileFormat) GetStatus() string {
+	return ""
+}
