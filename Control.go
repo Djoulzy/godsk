@@ -25,7 +25,7 @@ func (D *DSKFileFormat) GetNextByte() byte {
 	}
 
 	if debug {
-		fmt.Printf("-- [%c] T:%02.02f (%d) Rev: %02d Pos:%d    \r", wheel[count], D.physicalTrack, D.dataTrack, D.revolution, D.byteStreamPos)
+		D.output = fmt.Sprintf("[%c]  %05.02f     %02d    %02d %5d", wheel[count], D.physicalTrack, D.dataTrack, D.revolution, D.byteStreamPos)
 	}
 	count++
 	if count >= len(wheel) {
@@ -94,10 +94,14 @@ func (D *DSKFileFormat) DumpTrack(track float32) {
 	fmt.Printf("\n")
 }
 
+func (D *DSKFileFormat) GetCurrentTrack() float32 {
+	return D.physicalTrack
+}
+
 func (D *DSKFileFormat) DumpTrackRaw(track float32) {
 
 }
 
 func (D *DSKFileFormat) GetStatus() string {
-	return ""
+	return D.output
 }

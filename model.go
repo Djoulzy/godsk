@@ -23,4 +23,5 @@ type DSKFileFormat struct {
 	dataTrack     byte
 	byteStreamPos uint32
 	revolution    int
+	output        string
 }
