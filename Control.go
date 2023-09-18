@@ -98,7 +98,7 @@ func (D *DSKFileFormat) GetCurrentTrack() float32 {
 	return D.physicalTrack
 }
 
-func (D *DSKFileFormat) DumpTrackRaw(track float32) {
+func (D *DSKFileFormat) DumpTracksRaw() {
 
 }
 
